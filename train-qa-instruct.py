@@ -2,7 +2,6 @@ from unsloth import FastLanguageModel
 import torch
 from datasets import load_dataset
 from unsloth import UnslothTrainer, UnslothTrainingArguments
-import os
 import argparse
 
 def main():
