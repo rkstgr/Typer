@@ -2,3 +2,4 @@ datasets
 torch
 unsloth
 huggingface_hub
+transformers
