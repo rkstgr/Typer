@@ -1,8 +1,6 @@
 from unsloth import FastLanguageModel
 import torch
 from datasets import load_dataset
-from transformers import TrainingArguments
-from unsloth import is_bfloat16_supported
 from unsloth import UnslothTrainer, UnslothTrainingArguments
 import os
 import argparse
@@ -43,7 +41,7 @@ def main():
         lora_dropout=0,
         bias="none",
         use_gradient_checkpointing=True,
-        random_state=3409,
+        random_state=3407,
         use_rslora=True,
         loftq_config=None,
     )
