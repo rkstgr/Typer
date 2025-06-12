@@ -45,8 +45,13 @@ def main():
         loftq_config=None,
     )
 
-    # Chat template for Q&A format
-    chat_template = """<|im_start|>system
+    # Set the Jinja2 chat template on the tokenizer
+    # This will be embedded in the GGUF file automatically
+    tokenizer.chat_template = """{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}
+    {% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}"""
+
+    # Python format string for training data formatting
+    chat_template_format = """<|im_start|>system
 You are a helpful assistant that provides accurate and detailed answers about Typst, a modern markup language for document preparation.<|im_end|>
 <|im_start|>user
 {}<|im_end|>
@@ -71,7 +76,7 @@ You are a helpful assistant that provides accurate and detailed answers about Ty
                     assistant_content = message["content"]
 
             # Format as chat template
-            text = chat_template.format(user_content, assistant_content) + EOS_TOKEN
+            text = chat_template_format.format(user_content, assistant_content) + EOS_TOKEN
             texts.append(text)
 
         return {"text": texts}
@@ -126,12 +131,19 @@ You are a helpful assistant that provides accurate and detailed answers about Ty
     # Train the model
     trainer_stats = trainer.train()
 
-    # Save the model
+    # Save the model with the chat template
     print(f"\nSaving model to: {args.output}")
     model.save_pretrained(args.output)
     tokenizer.save_pretrained(args.output)
 
-    print("Training completed successfully!")
+    # Verify the chat template was saved
+    print("\nChat template saved to tokenizer:")
+    try:
+        print(tokenizer.chat_template[:200] + "...")
+    except Exception as e:
+        print(f"Error: {e}")
+
+    print("\nTraining completed successfully!")
     print(f"Final training loss: {trainer_stats.training_loss:.4f}")
 
 if __name__ == "__main__":
