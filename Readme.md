@@ -8,3 +8,6 @@ Currently, trained in two stages:
 2. Instruction fine-tuning on Q&A dataset derived from Typst Forum Questions (`train-qa-instruct.py`)
 
 Currently both stages use LoRa (stage 2 continues training the lora adapters)
+
+## Acknowledgements
+Computational resources were provided by the German AI Service Center WestAI.
